@@ -1,1 +1,3 @@
 *.prettierrc
+.vscode
+Mapty-app/Mapty*.png
