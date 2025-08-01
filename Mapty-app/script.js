@@ -104,54 +104,20 @@ class App {
     // 1. Get Data from form
     e.preventDefault();
     let type = inputType.value;
-    let distance = inputDistance.value.trim();
-    let duration = inputDuration.value.trim();
+    let distance = +inputDistance.value.trim();
+    let duration = +inputDuration.value.trim();
 
-    // ****** Adapt this part as the course shows *********
-    // ****** But using our implementation of regexes ******
-
-    // isFinite (the number hasn't be infinity or NaN)
-    // every() each one and all of the values have to be true after the evaluation
-
-    const validNumbersPattern = new RegExp(/^\d*(\.\d+)?$/);
-
-    // This function evaluates that every input has a real positive number
-    // through the Regular Expression above. All validations on string values.
-    const validRunningData = (...inputs) => {
-      return inputs.every(input => validNumbersPattern.test(input));
-    };
-
-    const someEmptyRunningData = (...inputs) => {
-      return inputs.some(input => input === '');
-    };
-
-    // 3. If workout running, create running object
+    // 2. If workout running, create running object
     if (type === 'running') {
-      let cadence = inputCadence.value.trim();
+      let cadence = +inputCadence.value.trim();
+      // Just for debug
       console.log({
         distance,
         duration,
         cadence,
       });
 
-      // 2. Check if data is valid
-      if (someEmptyRunningData(distance, duration, cadence)) {
-        alert('Some inputs are empty');
-      } else if (validRunningData(distance, duration, cadence)) {
-        alert('These inputs are OK');
-        distance = Number(distance);
-        duration = Number(duration);
-        cadence = Number(cadence);
-        console.log({
-          distance,
-          duration,
-          cadence,
-        });
-      } else {
-        alert('Invalid Data.');
-      }
-      // if (!Number.isFinite(distance))
-      //   return alert('Inputs have to be positive values!');
+      // 3. Check if data is valid
     }
     // 4. If workout cycling, create cycling object
     if (type === 'cycling') {
