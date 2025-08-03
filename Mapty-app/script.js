@@ -54,6 +54,7 @@ const cycling1 = new Cycling([39, -12], 27, 95, 523);
 class App {
   #map;
   #mapEvent;
+  #workouts = [];
 
   constructor() {
     this._getPosition();
@@ -101,15 +102,21 @@ class App {
 
   // This should be activated when the user hits Enter.
   _newWorkout(e) {
+    const validInputs = (...inputs) =>
+      inputs.every(inp => Number.isFinite(inp));
+    const allPositives = (...inputs) => inputs.every(inp => inp > 0);
+
     // 1. Get Data from form
     e.preventDefault();
     let type = inputType.value;
     let distance = +inputDistance.value.trim();
     let duration = +inputDuration.value.trim();
-
+    const { lat, lng } = this.#mapEvent.latlng;
+    let workout;
     // 2. If workout running, create running object
     if (type === 'running') {
       let cadence = +inputCadence.value.trim();
+
       // Just for debug
       console.log({
         distance,
@@ -118,14 +125,39 @@ class App {
       });
 
       // 3. Check if data is valid
+      if (
+        !validInputs(distance, duration, cadence) ||
+        !allPositives(distance, duration, cadence)
+      )
+        return alert('Input have to be positive numbers');
+
+      workout = new Running([lat, lng], distance, duration, cadence);
     }
+
     // 4. If workout cycling, create cycling object
     if (type === 'cycling') {
       const elevationGain = +inputElevation.value;
+
+      // Just for debug
+      console.log({
+        distance,
+        duration,
+        elevationGain,
+      });
+
+      if (
+        !validInputs(distance, duration, elevationGain) ||
+        !allPositives(distance, duration)
+      )
+        return alert('Input have to be positive numbers');
+
+      workout = new Cycling([lat, lng], distance, duration, elevationGain);
     }
     // 5. Add the new object to the workouts array
+    this.#workouts.push(workout);
+    console.log(workout);
     // 6. Render workout on map as a marker */
-    const { lat, lng } = this.#mapEvent.latlng;
+
     L.marker([lat, lng])
       .addTo(this.#map)
       .bindPopup(
